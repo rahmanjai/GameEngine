@@ -17,13 +17,19 @@ public class DisplayManager {
 	//Membuat sebuah display di layar
 	public static void createDisplay() {
 		
+		/*
+		 * Atribut ini bisa di gunakan untuk menunjukan pada Context Creation yang mana 
+		 * OpenGL interface akan digunakan. Termasuk versi dari OpenGL, bidang layer mana 
+		 * rendering memerlukan tempat dan juga pilihan debug dan forward mode kompatiblitas.
+		 * (Baca ARB_create_context spec untuk lebih detail.</p>
+		 */
 		ContextAttribs attribs = new ContextAttribs(3,2)
-				.withForwardCompatible(true)
-				.withProfileCore(true);
+				.withForwardCompatible(true) // Returns a new ContextAttribs instance with the CONTEXT_FORWARD_COMPATIBLE_BIT_ARB bit in CONTEXT_FLAGS_ARB set to the given value.
+				.withProfileCore(true); // Returns a new ContextAttribs instance with the CONTEXT_CORE_PROFILE_BIT_ARB bit in CONTEXT_PROFILE_MASK_ARB set to the given value.
 		
 		try {
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.create(new PixelFormat(), attribs);
+			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT)); // Ukuran Display
+			Display.create(new PixelFormat(), attribs); // PixelFormat adalah attribut dari pixel dimana warna dan kedalaman bit detentukan.
 			Display.setTitle("Game Engine Ku");
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block

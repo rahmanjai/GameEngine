@@ -1,6 +1,7 @@
 package renderEngine;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +29,12 @@ public class Loader {
 	 * dan memiuat data tersebut kedalam sebuah VAO dan lalu
 	 * mengembalikan informasi tentang VAO sebagai sebuah RawModel objek
 	 */
-	public RawModel loadToVAO(float[] positions) {
+	public RawModel loadToVAO(float[] positions, int[] indices) {
 		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
 		storeDataAttributeList(0, positions);
 		unbindVAO();
-		return new RawModel (vaoID, positions.length/3);
+		return new RawModel (vaoID, indices.length);
 	}
 	
 	//Menghapus data di memori ketiak engine di tutup
@@ -74,6 +76,40 @@ public class Loader {
 	private void unbindVAO() {
 		GL30.glBindVertexArray(0);
 	}
+	
+	/**
+	 * Method disini berjalan memuat indeks buffer yang akan digunakan
+	 * untuk efisiensi pembuatan Verteks seperti yang sudah dijelaskan
+	 * Verteks berulang akan dibuatkan indeknya yang dengan indeks itu
+	 * sebuah objek dibuat.
+	 */
+	private void bindIndicesBuffer(int[] indices) {
+		// Membuat VBO Kosong
+		int vboID = GL15.glGenBuffers();
+		// Fungsi untuk mendelete data vboID di dalam memori ketika Game nantinya di tutup
+		vbos.add(vboID);
+		// Digunakan sebagai Indeks Buffer dan lalu kita letakan ID dari VBA
+		// Yang ingin kita Bind(ikat)
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
+		IntBuffer buffer = storeDataInIntBuffer(indices);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+	}
+	
+	/**
+	 * Menyimpan indeks kedalam VBA dan seperti data lainnya untuk bisa tersimpan
+	 * kedalam sebuah float buffer pertama-tama indeks harus di simpan dahulu
+	 * kedalam sebuah Int Buffer.
+	 */
+	private IntBuffer storeDataInIntBuffer(int[] data) {
+		// Membuat sebuah int buffer kosong
+		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+		// Meletakan Data kedalam Buffer
+		buffer.put(data);
+		//Agar buffer siap untuk digunakan maka diperlukan flip
+		buffer.flip();
+		return buffer;
+	}
+	
 	
 	/**
 	 * Data harus di simpan di dalam sebuah VBO sebagai sebuah float buffer

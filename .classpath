@@ -7,7 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jars/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="lib/jars/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/jars/lwjgl.jar" sourcepath="lib/src/src.zip"/>
 	<classpathentry kind="lib" path="lib/jars/slick-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
