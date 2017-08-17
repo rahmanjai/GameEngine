@@ -2,11 +2,13 @@ package engineTester;
 
 import org.lwjgl.opengl.Display;
 
+import models.RawModel;
+import models.TexturedModel;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
-import renderEngine.RawModel;
 import renderEngine.Renderer;
 import shader.StaticShader;
+import textures.ModelTexture;
 
 public class MainGameLoop {
 	
@@ -32,14 +34,23 @@ public class MainGameLoop {
 				3,1,2	// Segitiga Kanan Bawah
 		};
 		
+		float[] textureCoords = {
+				0,0,	//V0
+				0,1,	//V1
+				1,1,	//V2
+				1,0		//V3
+		};
+		
 		// Memuat verteks diatas kedalam model dan loader
-		RawModel model = loader.loadToVAO(vertices, indices);
+		RawModel model = loader.loadToVAO(vertices,textureCoords, indices);
+		ModelTexture texture = new ModelTexture(loader.loadTexture("tile"));
+		TexturedModel texturedModel = new TexturedModel(model, texture);
 		
 		while (!Display.isCloseRequested()) {
 			renderer.prepare();
 			//game logic
 			shader.start();
-			renderer.render(model);
+			renderer.render(texturedModel);
 			shader.stop();
 			DisplayManager.updateDisplay();
 			

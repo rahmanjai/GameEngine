@@ -12,7 +12,7 @@ public class DisplayManager {
 	// Variable untuk menentukan ukuran layar
 	private static final int WIDTH = 1000;
 	private static final int HEIGHT = 640;
-	private static final int FPS_CAP = 120;
+	private static final int FPS_CAP = 60;
 	
 	//Membuat sebuah display di layar
 	public static void createDisplay() {
