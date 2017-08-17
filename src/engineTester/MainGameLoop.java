@@ -6,6 +6,7 @@ import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.RawModel;
 import renderEngine.Renderer;
+import shader.StaticShader;
 
 public class MainGameLoop {
 	
@@ -14,6 +15,7 @@ public class MainGameLoop {
 		DisplayManager.createDisplay();
 		
 		Loader loader = new Loader();
+		StaticShader shader = new StaticShader();
 		Renderer renderer = new Renderer();
 		
 		// OpenGL expects vertices to be defined counter clock by default
@@ -36,12 +38,15 @@ public class MainGameLoop {
 		while (!Display.isCloseRequested()) {
 			renderer.prepare();
 			//game logic
+			shader.start();
 			renderer.render(model);
+			shader.stop();
 			DisplayManager.updateDisplay();
 			
 		}
 		
 		loader.cleanUp();
+		shader.cleanUp();
 		DisplayManager.closeDisplay();
 		
 	}
