@@ -12,9 +12,13 @@ package shader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 public abstract class ShaderProgram {
 	
@@ -22,10 +26,12 @@ public abstract class ShaderProgram {
 	private int vertexShaderID;
 	private int fragmentShaderID;
 	
+	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
+	
 	/**
-	 * Sebuah kostruktor yang akan membawa vertex file file path
-	 * dan untuk fragment file akan di digunakan oleh method ini. Kita hanya
-	 * membuatnya untuk mendapatkan vertexshaderID dengan memuat vertex file
+	 * Sebuah kostruktor yang akan membawa vertex file file path dan untuk
+	 * fragment file akan di digunakan oleh method ini. Kita membuatnya
+	 * hanya untuk mendapatkan vertexshaderID dengan memuat vertex file
 	 * dan kita sudah memiliki GL_VERTEX_SHADER
 	 */
 	public ShaderProgram(String vertexFile, String fragmentFile) {
@@ -37,6 +43,13 @@ public abstract class ShaderProgram {
 		bindAttributes();
 		GL20.glLinkProgram(programID);
 		GL20.glValidateProgram(programID);
+		getAllUniformLocation();
+	}
+	
+	protected abstract void getAllUniformLocation();
+	
+	protected int getUniformLocation (String uniformName) {
+		return GL20.glGetUniformLocation(programID, uniformName);
 	}
 	
 	public void start() {
@@ -60,6 +73,57 @@ public abstract class ShaderProgram {
 	
 	protected void bindAttribute(int attribute, String variableName) {
 		GL20.glBindAttribLocation(programID, attribute, variableName);
+	}
+	
+	/*
+	 * Beberapa methon yang akan meload nilai ke lokasi uniform ini.
+	 */
+	
+	/**
+	 * Membawa lokasi dan nilai dari variabel uniform dan harus dalam tipe float
+	 * @param location
+	 * @param value
+	 */
+	protected void loadFloat(int location, float value) {
+		GL20.glUniform1f(location, value);
+	}
+	
+	/**
+	 * Memuat vector kedalam uniform, jika kita memiliki variabel yang
+	 * sangat seragam di dalam kode shader kita bisa memuat vector kedalamnya.
+	 * Dengan memanggil method ini akan membawa lokasi dari e efek variabel uniform
+	 * dan vector yang ingin kita muat kedalamnya.
+	 * @param location
+	 * @param vector
+	 */
+	protected void loadVector(int location, Vector3f vector) {
+		GL20.glUniform3f(location, vector.x, vector.y, vector.z);
+	}
+
+	/**
+	 * Memuat boolean ke dalam kode shader
+	 * @param location
+	 * @param value
+	 */
+	protected void loadBooleand(int location, boolean value) {
+		float toLoad = 0;
+		if(value) {
+			toLoad = 1;
+		}
+		GL20.glUniform1f(location, toLoad);
+	}
+	
+	/**
+	 * Jika ingin memuat sebuah matriks kedalam kode shader, dalam sebuah
+	 * matematika untuk variabel Uniform/Seragam kita memerlukan lokasi
+	 * dari variabel uniform dan matrik yang ingin kita muat kedalamnya.
+	 * @param location
+	 * @param matrix
+	 */
+	protected void loadMarix(int location, Matrix4f matrix) {
+		matrix.store(matrixBuffer);
+		matrixBuffer.flip();
+		GL20.glUniformMatrix4(location, false, matrixBuffer);
 	}
 	
 	/**
