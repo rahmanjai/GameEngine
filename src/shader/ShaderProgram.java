@@ -120,7 +120,7 @@ public abstract class ShaderProgram {
 	 * @param location
 	 * @param matrix
 	 */
-	protected void loadMarix(int location, Matrix4f matrix) {
+	protected void loadMatrix(int location, Matrix4f matrix) {
 		matrix.store(matrixBuffer);
 		matrixBuffer.flip();
 		GL20.glUniformMatrix4(location, false, matrixBuffer);
