@@ -30,7 +30,7 @@ public class DisplayManager {
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT)); // Ukuran Display
 			Display.create(new PixelFormat(), attribs); // PixelFormat adalah attribut dari pixel dimana warna dan kedalaman bit detentukan.
-			Display.setTitle("Game Engine Ku");
+			Display.setTitle("Game Engine");
 		} catch (LWJGLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
